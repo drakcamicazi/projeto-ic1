@@ -3,6 +3,7 @@
 //Thalles Raphael Guimarães, nº USP 11320297
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #define MAX_LINHAS 29
 #define TOTAL_CHARS 100000
 
@@ -11,13 +12,13 @@ struct filme{
 	char rating[6];
 	char ratingLevel[100];
 	int ratingDescription;
-	char releaseYear[5];
+	int releaseYear;
 	int urScore;
 	int urSize;
 };
 
 struct structAtributo{
-	char aFilme[5], aTipo[2]; //MUDAR PARA INT
+	int aFilme, aTipo;
 	char aDesc[100];
 };
 
@@ -86,9 +87,9 @@ int main(){
 		itoken = 0;
 		/* walk through other tokens */
 		while(token != NULL) {
-			if (itoken == 0) strcpy(a[i].aFilme, token);
+			if (itoken == 0) a[i].aFilme = atoi(token);
 			else
-			if (itoken == 1) strcpy(a[i].aTipo, token);
+			if (itoken == 1) a[i].aTipo = atoi(token);
 			else
 			if (itoken == 3) strcpy(a[i].aDesc, token);
 			else
@@ -102,8 +103,31 @@ int main(){
 
 	printf("\n---------------------\n");
 
-	for (i = 0; i < (MAX_LINHAS*7); i++){
-		printf("Filme %s, tipo %s, desc: %s", a[i].aFilme, a[i].aTipo, a[i].aDesc);
+	for (i = 0; i < (MAX_LINHAS*7); i++){ //loop para armazenar do registro de atributo no registro de filme
+		printf("Filme %i, tipo %i, desc: %s", a[i].aFilme, a[i].aTipo, a[i].aDesc);
+
+		if (a[i].aTipo == 1) //char title (1)
+		strcpy(filmes[a[i].aFilme].title, a[i].aDesc);
+		else
+		if (a[i].aTipo == 2) //char rating (2)
+		strcpy(filmes[a[i].aFilme].rating, a[i].aDesc);
+		else
+		if (a[i].aTipo == 3) //char ratingLevel (3)
+		strcpy(filmes[a[i].aFilme].ratingLevel, a[i].aDesc);
+		else
+		if (a[i].aTipo == 4) // int ratingDescription (4)
+		filmes[a[i].aFilme].ratingDescription = atoi(a[i].aDesc);
+		else
+		if (a[i].aTipo == 5) //int releaseYear (5)
+		filmes[a[i].aFilme].releaseYear = atoi(a[i].aDesc);
+		else
+		if (a[i].aTipo == 6) //int urScore (6)
+		filmes[a[i].aFilme].urScore = atoi(a[i].aDesc);
+		else
+		if (a[i].aTipo == 7) //int urSize (7)
+		filmes[a[i].aFilme].urSize = atoi(a[i].aDesc);
+		else
+			printf("Bugou os indices de tipo\n");
 	}
 
 	return 0;

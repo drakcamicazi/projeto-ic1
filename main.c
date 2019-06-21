@@ -3,7 +3,7 @@
 //Thalles Raphael Guimarães, nº USP 11320297
 #include <stdio.h>
 #include <string.h>
-#define MAX_LINHAS 9
+#define MAX_LINHAS 30
 #define TOTAL_CHARS 90900
 
 struct filme{
@@ -18,36 +18,31 @@ struct filme{
 
 typedef struct filme Filme;
 
+//void armazena(Filme f, int id, char texto){
+//	if (id == 1) f.title = texto;
+//	else
+//		if (id == 2) f.rating = texto;
+//}
+
 int main(){
 	FILE *netflix;
 	Filme filmes[MAX_LINHAS];
-	char linha[255], *token, netflixStr[TOTAL_CHARS];
-	int i = 1, primeiro = 1, atributo = 0, idFilme = 0;
+	char linha[255], *token, netflixStr[TOTAL_CHARS], c;
+	int i = 0, primeiro = 1, atributo = 0, idFilme = 0;
+	int tamanhoNetflixStr;
 
-	netflix = fopen("netflix_10.csv", "r");
+	netflix = fopen("netflix_30.csv", "r");
 
-	while (fgets(linha, 255, netflix) != NULL){
+	 //lê o arquivo inteiro e armazena na string netflixStr
 
-		//printf("%s\n", linha); /* printa cada linha */
+    tamanhoNetflixStr = fread(&netflixStr, sizeof(*netflixStr), TOTAL_CHARS, netflix);
 
-		if (primeiro == 0){ //para não ler a primeira linha!
-			/* get the first token */
-			token = strtok(linha, ";");
-
-			/* walk through other tokens */
-			while( token != NULL ) {
-				atributo = i%8;
-
-				printf( "%i.%i- %s\n", idFilme, atributo, token); //printa cada bloquinho de info com o id do filme e qual é o atributo
-
-				token = strtok(NULL, ";");
-
-				i++;
-				if (atributo == 0) idFilme++; //se chegar ao atributo 0 (fim do registro do filme), mudar o id do filme pro próximo
-			}
-		}
-		primeiro = 0;
-
+	for(i=0; i < tamanhoNetflixStr; i++){
+        c = netflixStr[i];
+				if ( c == ';') printf("\n");
+				else
+					if (c == '\n') printf("Fim de filme\n");
+						else printf("%c", c);
 	}
 
 	fclose(netflix);
@@ -55,4 +50,3 @@ int main(){
 	return 0;
 
 }
-

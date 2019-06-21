@@ -38,6 +38,10 @@ int main(){
 
 		if (c == ';') { //quando encontrar um separador
 			printf("\n%i.%i.%i- ", idFilme, atributo, linhai);
+			if (atributo == 0){
+				idFilme = idFilme + 1;
+				atributo = 1;
+			}
 			linhai++;
 		}
 		else
@@ -50,10 +54,7 @@ int main(){
 		}
 
 		atributo = linhai % 8;
-				if (atributo == 0){
-					idFilme++;
-					
-				}
+
 	}
 
 	fclose(netflix);

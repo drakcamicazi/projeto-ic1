@@ -52,7 +52,7 @@ int main(){
 		atributo = linhai % 8;
 				if (atributo == 0){
 					idFilme++;
-					atributo = 1;
+					
 				}
 	}
 

@@ -96,6 +96,8 @@ int main(){
 
 			if (itoken == 0 && token != NULL) strcpy(a[i].aFilme, token);
 			else
+			if (itoken == 1 && token != NULL) strcpy(a[i].aTipo, token);
+			else
 			if (itoken == 3 && token != NULL) strcpy(a[i].aDesc, token);
 			else
 			printf("Linha %s lida.\n", token);

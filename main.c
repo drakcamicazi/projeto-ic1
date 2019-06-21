@@ -43,7 +43,13 @@ int main(){
 	for(i=0; i < tamanhoNetflixStr; i++){ //FOR PARA PRÉ-PROCESSAMENTO DO ARQUIVO
 		c = netflixStr[i];
 		if (c == ';') { //quando encontrar um separador
-			if (idFilme != 0) fprintf(processado, "\n%i;%i;%i;", idFilme-1, atributo, linhai-8);
+			if (netflixStr[i+1] == ';'){ //verifica se há ;;
+				netflixStr[i+1] = 'N';
+				netflixStr[i+2] = 'A';
+				netflixStr[i+3] = ';';
+			}
+			//escreve a linha SE for um atributo válido
+			if (idFilme != 0 && atributo != 0) fprintf(processado, "\n%i;%i;%i;", idFilme-1, atributo, linhai-8);
 			if (atributo == 0){
 				atributo = 1;
 				idFilme = idFilme + 1;
@@ -74,31 +80,17 @@ int main(){
 
 	processado = fopen("netflix_preproc.txt", "r");
 
-	// while ((fscanf(processado, "%[^\n]", &linha )) != EOF) {
-	// 	puts(linha); //POR QUE VC CAI EM UM LOOP INFINITO???----------------------------
-	//
-	// }
-	// while ((c = fgetc(processado)) != EOF) {
-	// 	printf("%c", c);
-	// 	if (c == ';')	pontovirgula++;
-	// 	else pontovirgula = -1;
-	// }
-	//
 	i=0;
 	while (fgets(linha, 255, processado) != NULL){
 		token = strtok(linha, ";");
 		itoken = 0;
-		strcpy(a[i].aFilme, "0");
-		strcpy(a[i].aTipo, "0");
-		strcpy(a[i].aDesc, "NA");
 		/* walk through other tokens */
-		while( itoken <= 3 ) {
-
-			if (itoken == 0 && token != NULL) strcpy(a[i].aFilme, token);
+		while(token != NULL) {
+			if (itoken == 0) strcpy(a[i].aFilme, token);
 			else
-			if (itoken == 1 && token != NULL) strcpy(a[i].aTipo, token);
+			if (itoken == 1) strcpy(a[i].aTipo, token);
 			else
-			if (itoken == 3 && token != NULL) strcpy(a[i].aDesc, token);
+			if (itoken == 3) strcpy(a[i].aDesc, token);
 			else
 			printf("Linha %s lida.\n", token);
 			token = strtok(NULL, ";");
@@ -108,10 +100,10 @@ int main(){
 	}
 	fclose(processado);
 
-	printf("---------------------\n");
+	printf("\n---------------------\n");
 
-	for (i = 0; i < (MAX_LINHAS*8); i++){
-		printf("Filme %s, tipo %s, desc: %s\n", a[i].aFilme, a[i].aTipo, a[i].aDesc);
+	for (i = 0; i < (MAX_LINHAS*7); i++){
+		printf("Filme %s, tipo %s, desc: %s", a[i].aFilme, a[i].aTipo, a[i].aDesc);
 	}
 
 	return 0;

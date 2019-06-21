@@ -31,7 +31,7 @@ int main(){
 	Filme filmes[MAX_LINHAS];
 	Atributo a[203]; //203 é 29 * 7  (num de filmes * num de atributos por filme)
 	char linha[255], desc[100][203], *token, netflixStr[TOTAL_CHARS], c;
-	int i = 0, primeiro = 1, atributo = 1, idFilme = 0, linhai = 1;
+	int i = 0, primeiro = 1, atributo = 1, idFilme = 0, linhai = 2;
 	int tamanhoNetflixStr;
 
 	netflix = fopen("netflix_30.csv", "r");
@@ -39,13 +39,12 @@ int main(){
 	//lê o arquivo inteiro e armazena na string netflixStr
 
 	tamanhoNetflixStr = fread(&netflixStr, sizeof(*netflixStr), TOTAL_CHARS, netflix);
-	printf("%i.%i.%i.", idFilme, atributo, linhai);
-	linhai++;
+
 	for(i=0; i < tamanhoNetflixStr; i++){
 		c = netflixStr[i];
 
 		if (c == ';') { //quando encontrar um separador
-			printf("\n%i.%i.%i.", idFilme, atributo, linhai);
+			if (idFilme != 0) printf("\n%i.%i.%i.", idFilme-1, atributo, linhai);
 
 			if (atributo == 0){
 				atributo = 1;
@@ -59,11 +58,11 @@ int main(){
 		}
 		else
 		if (c == '\n') { //quando pula linha e o idFilme tá dentro do limite
-			printf("\n\n%i.%i.%i.", idFilme, atributo, linhai);
+			if (idFilme != 0) printf("\n\n%i.%i.%i.", idFilme-1, atributo, linhai);
 			linhai++;
 		}
 		else { //quando encontrar qualquer outro caractere
-			printf("%c", c);
+			if (idFilme != 0) printf("%c", c);
 		}
 
 		atributo = linhai % 8;

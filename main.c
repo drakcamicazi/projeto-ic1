@@ -18,31 +18,42 @@ struct filme{
 
 typedef struct filme Filme;
 
-//void armazena(Filme f, int id, char texto){
-//	if (id == 1) f.title = texto;
-//	else
-//		if (id == 2) f.rating = texto;
-//}
 
 int main(){
 	FILE *netflix;
 	Filme filmes[MAX_LINHAS];
 	char linha[255], *token, netflixStr[TOTAL_CHARS], c;
-	int i = 0, primeiro = 1, atributo = 0, idFilme = 0;
+	int i = 0, primeiro = 1, atributo = 1, idFilme = 0, linhai = 1;
 	int tamanhoNetflixStr;
 
 	netflix = fopen("netflix_30.csv", "r");
 
-	 //lê o arquivo inteiro e armazena na string netflixStr
+	//lê o arquivo inteiro e armazena na string netflixStr
 
-    tamanhoNetflixStr = fread(&netflixStr, sizeof(*netflixStr), TOTAL_CHARS, netflix);
-
+	tamanhoNetflixStr = fread(&netflixStr, sizeof(*netflixStr), TOTAL_CHARS, netflix);
+	printf("%i.%i.%i- ", idFilme, atributo, linhai);
+	linhai++;
 	for(i=0; i < tamanhoNetflixStr; i++){
-        c = netflixStr[i];
-				if ( c == ';') printf("\n");
-				else
-					if (c == '\n') printf("Fim de filme\n");
-						else printf("%c", c);
+		c = netflixStr[i];
+
+		if (c == ';') { //quando encontrar um separador
+			printf("\n%i.%i.%i- ", idFilme, atributo, linhai);
+			linhai++;
+		}
+		else
+		if (c == '\n') { //quando pula linha
+			printf("---- Fim de filme\n\n%i.%i.%i- ", idFilme, atributo, linhai);
+			linhai++;
+		}
+		else { //quando encontrar qualquer outro caractere
+			printf("%c", c);
+		}
+
+		atributo = linhai % 8;
+				if (atributo == 0){
+					idFilme++;
+					atributo = 1;
+				}
 	}
 
 	fclose(netflix);

@@ -17,7 +17,7 @@ struct filme{
 };
 
 struct structAtributo{
-	int aFilme, aTipo;
+	char aFilme[5], aTipo[2]; //MUDAR PARA INT
 	char aDesc[100];
 };
 
@@ -30,7 +30,7 @@ int main(){
 	Atributo a[7 * MAX_LINHAS];
 	char linha[255], *token, netflixStr[TOTAL_CHARS], c;
 	int i = 0, primeiro = 1, atributo = 1, idFilme = 0, linhai = 2, tamanhoNetflixStr;
-	int l=0, lFilme=0, lTipo=0, pontovirgula = -1;
+	int l=0, lFilme=0, lTipo=0, pontovirgula = -1, itoken;
 	char lDesc[100]="";
 	//------------PARTE 0: PRÉ-PROCESSAMENTO DO ARQUIVO NETFLIX_ALL.CSV---------------
 	processado = fopen("netflix_preproc.txt", "w");
@@ -74,16 +74,43 @@ int main(){
 
 	processado = fopen("netflix_preproc.txt", "r");
 
-	while ((fscanf(processado, "%[^\n]", &linha )) != EOF) {
-		puts(linha); //POR QUE VC CAI EM UM LOOP INFINITO???----------------------------
-
-	}
+	// while ((fscanf(processado, "%[^\n]", &linha )) != EOF) {
+	// 	puts(linha); //POR QUE VC CAI EM UM LOOP INFINITO???----------------------------
+	//
+	// }
 	// while ((c = fgetc(processado)) != EOF) {
 	// 	printf("%c", c);
 	// 	if (c == ';')	pontovirgula++;
 	// 	else pontovirgula = -1;
 	// }
+	//
+	i=0;
+	while (fgets(linha, 255, processado) != NULL){
+		token = strtok(linha, ";");
+		itoken = 0;
+		strcpy(a[i].aFilme, "0");
+		strcpy(a[i].aTipo, "0");
+		strcpy(a[i].aDesc, "NA");
+		/* walk through other tokens */
+		while( itoken <= 3 ) {
+
+			if (itoken == 0 && token != NULL) strcpy(a[i].aFilme, token);
+			else
+			if (itoken == 3 && token != NULL) strcpy(a[i].aDesc, token);
+			else
+			printf("Linha %s lida.\n", token);
+			token = strtok(NULL, ";");
+			itoken++;
+		}
+		i++;
+	}
 	fclose(processado);
+
+	printf("---------------------\n");
+
+	for (i = 0; i < (MAX_LINHAS*8); i++){
+		printf("Filme %s, tipo %s, desc: %s\n", a[i].aFilme, a[i].aTipo, a[i].aDesc);
+	}
 
 	return 0;
 }

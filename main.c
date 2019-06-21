@@ -27,13 +27,14 @@ typedef struct structAtributo Atributo;
 //void armazenaAtributo(int aFilme, int aTipo, char[100] aDesc){}
 
 int main(){
-	FILE *netflix;
+	FILE *netflix, *processado;
 	Filme filmes[MAX_LINHAS];
 	Atributo a[203]; //203 é 29 * 7  (num de filmes * num de atributos por filme)
 	char linha[255], desc[100][203], *token, netflixStr[TOTAL_CHARS], c;
 	int i = 0, primeiro = 1, atributo = 1, idFilme = 0, linhai = 2;
 	int tamanhoNetflixStr;
 
+	processado = fopen("netflix_preproc.txt", "w");
 	netflix = fopen("netflix_30.csv", "r");
 
 	//lê o arquivo inteiro e armazena na string netflixStr
@@ -44,12 +45,11 @@ int main(){
 		c = netflixStr[i];
 
 		if (c == ';') { //quando encontrar um separador
-			if (idFilme != 0) printf("\n%i;%i;%i;", idFilme-1, atributo, linhai-8);
+			if (idFilme != 0) fprintf(processado, "\n%i;%i;%i;", idFilme-1, atributo, linhai-8);
 			if (atributo == 0){
 				atributo = 1;
 				idFilme = idFilme + 1;
 				if (idFilme > MAX_LINHAS) {
-					printf("\nFim.");
 					break; //break o for quando atinge o máximo de filmes
 				}
 			}
@@ -58,13 +58,13 @@ int main(){
 		else
 		if (c == '\n') { //quando pula linha e o idFilme tá dentro do limite
 			if (idFilme != 0)
-				if (linhai != 9) printf("\n%i;%i;%i;", idFilme-1, atributo, linhai-8);
-				else printf("%i;%i;%i;", idFilme-1, atributo, linhai-8);
+				if (linhai != 9) fprintf(processado, "\n%i;%i;%i;", idFilme-1, atributo, linhai-8);
+				else fprintf(processado, "%i;%i;%i;", idFilme-1, atributo, linhai-8);
 
 			linhai++;
 		}
 		else { //quando encontrar qualquer outro caractere
-			if (idFilme != 0) printf("%c", c);
+			if (idFilme != 0) fprintf(processado, "%c", c);
 		}
 
 		atributo = linhai % 8;
@@ -72,6 +72,8 @@ int main(){
 	}
 
 	fclose(netflix);
+
+	fclose(processado);
 
 	return 0;
 

@@ -40,17 +40,16 @@ int main(){
 
 	tamanhoNetflixStr = fread(&netflixStr, sizeof(*netflixStr), TOTAL_CHARS, netflix);
 
-	for(i=0; i < tamanhoNetflixStr; i++){
+	for(i=0; i < tamanhoNetflixStr; i++){ //FOR PARA PRÉ-PROCESSAMENTO DO ARQUIVO
 		c = netflixStr[i];
 
 		if (c == ';') { //quando encontrar um separador
-			if (idFilme != 0) printf("\n%i.%i.%i.", idFilme-1, atributo, linhai);
-
+			if (idFilme != 0) printf("\n%i;%i;%i;", idFilme-1, atributo, linhai-8);
 			if (atributo == 0){
 				atributo = 1;
 				idFilme = idFilme + 1;
 				if (idFilme > MAX_LINHAS) {
-					printf("\nFim.\n");
+					printf("\nFim.");
 					break; //break o for quando atinge o máximo de filmes
 				}
 			}
@@ -58,7 +57,10 @@ int main(){
 		}
 		else
 		if (c == '\n') { //quando pula linha e o idFilme tá dentro do limite
-			if (idFilme != 0) printf("\n\n%i.%i.%i.", idFilme-1, atributo, linhai);
+			if (idFilme != 0)
+				if (linhai != 9) printf("\n%i;%i;%i;", idFilme-1, atributo, linhai-8);
+				else printf("%i;%i;%i;", idFilme-1, atributo, linhai-8);
+
 			linhai++;
 		}
 		else { //quando encontrar qualquer outro caractere

@@ -25,6 +25,12 @@ struct structAtributo{
 typedef struct filme Filme;
 typedef struct structAtributo Atributo;
 
+void apagarUltimoChar(char *c){
+     int tamanho = strlen(c); //armazena tamanho da string
+     c[tamanho - 1] = '\0'; //Seta o penúltimo caractere como fim
+     return;
+}
+
 int main(){
 	FILE *netflix, *processado;
 	Filme filmes[MAX_LINHAS];
@@ -91,9 +97,10 @@ int main(){
 			else
 			if (itoken == 1) a[i].aTipo = atoi(token);
 			else
-			if (itoken == 3) strcpy(a[i].aDesc, token);
-			else
-			printf("Linha %s lida.\n", token);
+			if (itoken == 3) {
+				apagarUltimoChar(token);
+				strcpy(a[i].aDesc, token);
+			}
 			token = strtok(NULL, ";");
 			itoken++;
 		}
@@ -104,8 +111,6 @@ int main(){
 	printf("\n---------------------\n");
 
 	for (i = 0; i < (MAX_LINHAS*7); i++){ //loop para armazenar do registro de atributo no registro de filme
-		printf("Filme %i, tipo %i, desc: %s", a[i].aFilme, a[i].aTipo, a[i].aDesc);
-
 		if (a[i].aTipo == 1) //char title (1)
 		strcpy(filmes[a[i].aFilme].title, a[i].aDesc);
 		else
@@ -128,6 +133,12 @@ int main(){
 		filmes[a[i].aFilme].urSize = atoi(a[i].aDesc);
 		else
 			printf("Bugou os indices de tipo\n");
+	}
+
+	printf("title;rating;ratingLevel;ratingDescription;release year;user rating score;user rating size;\n");
+	for (i=0; i<MAX_LINHAS; i++){
+		printf("%s; %s; %s; %i; %i; %i; %i\n", filmes[i].title, filmes[i].rating, filmes[i].ratingLevel, filmes[i].ratingDescription, filmes[i].releaseYear, filmes[i].urScore, filmes[i].urSize);
+
 	}
 
 	return 0;

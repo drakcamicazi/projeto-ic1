@@ -1,6 +1,3 @@
-//Alunos:
-//Milan Rufini de Andrade,   nº USP 11273868
-//Thalles Raphael Guimarães, nº USP 11320297
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -35,17 +32,32 @@ int main(){
 	FILE *netflix, *processado;
 	Filme filmes[MAX_LINHAS];
 	Atributo a[7 * MAX_LINHAS];
-	char linha[255], *token, netflixStr[TOTAL_CHARS], c;
-	int i = 0, primeiro = 1, atributo = 1, idFilme = 0, linhai = 2, tamanhoNetflixStr;
-	int l=0, lFilme=0, lTipo=0, pontovirgula = -1, itoken;
+	char linha[255], *token, netflixStr[TOTAL_CHARS], netflixStr2[TOTAL_CHARS + 200] = "", c;
+	int i = 0, j, primeiro = 1, atributo = 1, idFilme = 0, linhai = 2, tamanhoNetflixStr, tamanhoNetflixStr2;
+	int l=0, lFilme=0, lTipo=0, pontovirgula = -1, itoken, cont;
 	char lDesc[100]="";
-	//------------PARTE 0: PRÉ-PROCESSAMENTO DO ARQUIVO NETFLIX_ALL.CSV---------------
+	//------------TAREFA 0: PRÉ-PROCESSAMENTO DO ARQUIVO NETFLIX_ALL.CSV---------------
 	processado = fopen("netflix_preproc.txt", "w");
 	netflix = fopen("netflix_30.csv", "r");
 
 	//lê o arquivo inteiro e armazena na string netflixStr
-
 	tamanhoNetflixStr = fread(&netflixStr, sizeof(*netflixStr), TOTAL_CHARS, netflix);
+
+	j = 0; //j vai percorrer a string netflixStr2
+	for (i=0; i < tamanhoNetflixStr; i++){ //for pra copiar a netflixStr em netflixStr2, adicionando NA onde tiver ;;
+		c = netflixStr[i];
+		netflixStr2[j] = c;
+		if (c == ';' && netflixStr[i+1] == ';') {
+			j += 3;
+			netflixStr2[j+1] = 'N';
+			netflixStr2[j+2] = 'A';
+			netflixStr2[j+3] = ';';
+		}
+		j++;
+	}
+	netflixStr2[j] = '\0';
+
+	printf("%s\n --------------------------- \n", netflixStr2);
 
 	for(i=0; i < tamanhoNetflixStr; i++){ //FOR PARA PRÉ-PROCESSAMENTO DO ARQUIVO
 		c = netflixStr[i];
@@ -83,7 +95,7 @@ int main(){
 	fclose(netflix);
 	fclose(processado);
 
-	//--------------PARTE 1: ARMAZENAR EM REGISTROS DO TIPO FILME---------------
+	//--------------TAREFA 1: ARMAZENAR EM REGISTROS DO TIPO FILME---------------
 
 	processado = fopen("netflix_preproc.txt", "r");
 
@@ -135,11 +147,11 @@ int main(){
 			printf("Bugou os indices de tipo\n");
 	}
 
-	printf("title;rating;ratingLevel;ratingDescription;release year;user rating score;user rating size;\n");
-	for (i=0; i<MAX_LINHAS; i++){
-		printf("%s; %s; %s; %i; %i; %i; %i\n", filmes[i].title, filmes[i].rating, filmes[i].ratingLevel, filmes[i].ratingDescription, filmes[i].releaseYear, filmes[i].urScore, filmes[i].urSize);
-
-	}
+	//-------printf para testar o que foi armazenado no struct filme
+	// printf("title;rating;ratingLevel;ratingDescription;release year;user rating score;user rating size;\n");
+	// for (i=0; i<MAX_LINHAS; i++){
+	// 	printf("%s;%s;%s;%i;%i;%i;%i\n", filmes[i].title, filmes[i].rating, filmes[i].ratingLevel, filmes[i].ratingDescription, filmes[i].releaseYear, filmes[i].urScore, filmes[i].urSize);
+	// }
 
 	return 0;
 }

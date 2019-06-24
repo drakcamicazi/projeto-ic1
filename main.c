@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#define MAX_LINHAS 1000
+#define MAX_LINHAS 1000 //1000
 #define TOTAL_CHARS 100000
 
 struct filme{
 	char title[100];
-	char rating[6];
+	char rating[9];
 	char ratingLevel[100];
 	int ratingDescription;
 	int releaseYear;
@@ -40,13 +40,14 @@ void verificarAbertura(FILE *f1, FILE *f2){
 }
 
 int main(){
-	FILE *netflix, *processado;
+	FILE *netflix, *processado, *ex2;
 	Filme filmes[MAX_LINHAS];
 	Atributo a[7 * MAX_LINHAS];
 	char linha[255], *token, netflixStr[TOTAL_CHARS], c;
 	int i = 0, j, primeiro = 1, atributo = 1, idFilme = 0, linhai = 2, tamanhoNetflixStr;
 	int l=0, lFilme=0, lTipo=0, pontovirgula = -1, itoken, cont = 0;
 	char lDesc[100]="";
+	int mRatings[80][14] = {{ 0 }}, maiorAno, menorAno, qtdAnos;
 
 	//------------TAREFA 0: PRÉ-PROCESSAMENTO DO ARQUIVO NETFLIX_ALL.CSV---------------
 	processado = fopen("netflix_preproc.txt", "w");
@@ -156,6 +157,67 @@ int main(){
 	// for (i=0; i<MAX_LINHAS; i++){
 	// 	printf("%s;%s;%s;%i;%i;%i;%i\n", filmes[i].title, filmes[i].rating, filmes[i].ratingLevel, filmes[i].ratingDescription, filmes[i].releaseYear, filmes[i].urScore, filmes[i].urSize);
 	// }
+	// printf("%i\n", filmes[MAX_LINHAS-1].urSize);
+	//TODO: RESOLVER O BUG DO urSize
+
+
+	//-------------------TAREFA 2: ELABORE ANO A ANO A TOTALIZAÇÃO DE VÍDEOS P/ CADA UM DOS RATING-----------------------------
+
+	//passo 1, encontrar maior e menor ano de lançamento
+	maiorAno = filmes[0].releaseYear;
+	menorAno = filmes[0].releaseYear;
+	for (i = 0; i < MAX_LINHAS; i++){
+		if (filmes[i].releaseYear > maiorAno) maiorAno = filmes[i].releaseYear;
+		if (filmes[i].releaseYear < menorAno) menorAno = filmes[i].releaseYear;
+	}
+	qtdAnos = maiorAno - menorAno;
+
+	//passo 2, popula a primeira coluna da matriz com os anos
+	mRatings[0][0] = maiorAno;
+	for(i=1; i <= qtdAnos; i++){
+		mRatings[i][0] = maiorAno - i;
+	}
+
+	for (i = 0; i < MAX_LINHAS; i++){ // passo 3, FOR PARA ATRIBUIR AS QUANTIDADES DE RATINGS NA MATRIZ
+		if (strcmp(filmes[i].rating, "G") == 0) mRatings[maiorAno - filmes[i].releaseYear][1]++; // ta imprimindo 9 na coluna G sendo q deveria talvez ser 8????
+		else
+		if (strcmp(filmes[i].rating, "PG") == 0) mRatings[maiorAno - filmes[i].releaseYear][2]++;
+		else
+		if (strcmp(filmes[i].rating, "PG-13") == 0) mRatings[maiorAno - filmes[i].releaseYear][3]++;
+		else
+		if (strcmp(filmes[i].rating, "R") == 0) mRatings[maiorAno - filmes[i].releaseYear][4]++;
+		else
+		if (strcmp(filmes[i].rating, "NR") == 0) mRatings[maiorAno - filmes[i].releaseYear][5]++;
+		else
+		if (strcmp(filmes[i].rating, "UR") == 0) mRatings[maiorAno - filmes[i].releaseYear][6]++;
+		else
+		if (strcmp(filmes[i].rating, "TV-G") == 0) mRatings[maiorAno - filmes[i].releaseYear][7]++;
+		else
+		if (strcmp(filmes[i].rating, "TV-PG") == 0) mRatings[maiorAno - filmes[i].releaseYear][8]++;
+		else
+		if (strcmp(filmes[i].rating, "TV-14") == 0) mRatings[maiorAno - filmes[i].releaseYear][9]++;
+		else
+		if (strcmp(filmes[i].rating, "TV-MA") == 0) mRatings[maiorAno - filmes[i].releaseYear][10]++;
+		else
+		if (strcmp(filmes[i].rating, "TV-Y") == 0) mRatings[maiorAno - filmes[i].releaseYear][11]++;
+		else
+		if (strcmp(filmes[i].rating, "TV-Y7") == 0) mRatings[maiorAno - filmes[i].releaseYear][12]++;
+		else
+		if (strcmp(filmes[i].rating, "TV-Y7-FV") == 0) mRatings[maiorAno - filmes[i].releaseYear][13]++;
+		else
+		printf("Rating %i: %s fora do padrão.\n", i, filmes[i].rating);
+	}
+	
+	 //passo 4, escreve no arquivo a matriz de ratings por ano
+	ex2 = fopen("totalizacao_ratings.csv", "w");
+	fprintf(ex2, "Ano; G; PG; PG-13; R; NR; UR; TV-G; TV-PG; TV-14; TV-MA; TV-Y; TV-Y7; TV-Y7-FV;\n");
+	for(i=0; i<=qtdAnos; i++){
+		for(j=0; j<14; j++){
+			fprintf(ex2, "%4i; ", mRatings[i][j]);
+		}
+		fprintf(ex2, "\n");
+	}
+	fclose(ex2);
 
 	return 0;
 }

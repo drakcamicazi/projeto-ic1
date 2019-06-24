@@ -22,10 +22,21 @@ struct structAtributo{
 typedef struct filme Filme;
 typedef struct structAtributo Atributo;
 
+//TODO PELO MENOS MAIS UMA FUNÇÃO
+
+//útil para apagar o \n do arquivo pré-processado
 void apagarUltimoChar(char *c){
 	int tamanho = strlen(c); //armazena tamanho da string
 	c[tamanho - 1] = '\0'; //Seta o penúltimo caractere como fim
 	return;
+}
+
+//função para verificar se abriu os arquivos
+void verificarAbertura(FILE *f1, FILE *f2){
+	if(f1 == NULL || f2 == NULL){
+		printf("Erro na abertura de algum arquivo.");
+		exit(0);
+	}
 }
 
 int main(){
@@ -41,17 +52,12 @@ int main(){
 	processado = fopen("netflix_preproc.txt", "w");
 	netflix = fopen("netflix_all.csv", "r");
 
-	//verifica se abriu os arquivos
-	if(processado == NULL || netflix == NULL){
-		printf("Erro na abertura de um dos arquivos.");
-		exit(0);
-	}
+	verificarAbertura(netflix, processado);
 
 	//lê o arquivo inteiro e armazena na string netflixStr
 	tamanhoNetflixStr = fread(&netflixStr, sizeof(*netflixStr), TOTAL_CHARS, netflix);
 
-	//feat. Thalles              vet == netflixStr
-	for (i=0; i<TOTAL_CHARS; i++){
+	for (i=0; i<TOTAL_CHARS; i++){ //FOR PARA TRATAR CAMPOS VAZIOS DENOTADOS POR ;;
 		if(netflixStr[i] == ';' && netflixStr[i+1] == ';'){
 			/* empurra string para o final do vetor de caracteres */
 			for(j=TOTAL_CHARS-1; j>i+1; j--){
@@ -98,8 +104,7 @@ int main(){
 	//--------------TAREFA 1: ARMAZENAR EM REGISTROS DO TIPO FILME---------------
 
 	processado = fopen("netflix_preproc.txt", "r");
-
-
+	verificarAbertura(processado, processado);
 	i=0;
 	while (fgets(linha, 255, processado) != NULL){
 		token = strtok(linha, ";");

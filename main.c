@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#define MAX_LINHAS 29
+#define MAX_LINHAS 1000
 #define TOTAL_CHARS 100000
 
 struct filme{
@@ -23,50 +23,50 @@ typedef struct filme Filme;
 typedef struct structAtributo Atributo;
 
 void apagarUltimoChar(char *c){
-     int tamanho = strlen(c); //armazena tamanho da string
-     c[tamanho - 1] = '\0'; //Seta o penúltimo caractere como fim
-     return;
+	int tamanho = strlen(c); //armazena tamanho da string
+	c[tamanho - 1] = '\0'; //Seta o penúltimo caractere como fim
+	return;
 }
 
 int main(){
 	FILE *netflix, *processado;
 	Filme filmes[MAX_LINHAS];
 	Atributo a[7 * MAX_LINHAS];
-	char linha[255], *token, netflixStr[TOTAL_CHARS], netflixStr2[TOTAL_CHARS + 200] = "", c;
-	int i = 0, j, primeiro = 1, atributo = 1, idFilme = 0, linhai = 2, tamanhoNetflixStr, tamanhoNetflixStr2;
-	int l=0, lFilme=0, lTipo=0, pontovirgula = -1, itoken, cont;
+	char linha[255], *token, netflixStr[TOTAL_CHARS], c;
+	int i = 0, j, primeiro = 1, atributo = 1, idFilme = 0, linhai = 2, tamanhoNetflixStr;
+	int l=0, lFilme=0, lTipo=0, pontovirgula = -1, itoken, cont = 0;
 	char lDesc[100]="";
+
 	//------------TAREFA 0: PRÉ-PROCESSAMENTO DO ARQUIVO NETFLIX_ALL.CSV---------------
 	processado = fopen("netflix_preproc.txt", "w");
-	netflix = fopen("netflix_30.csv", "r");
+	netflix = fopen("netflix_all.csv", "r");
+
+	//verifica se abriu os arquivos
+	if(processado == NULL || netflix == NULL){
+		printf("Erro na abertura de um dos arquivos.");
+		exit(0);
+	}
 
 	//lê o arquivo inteiro e armazena na string netflixStr
 	tamanhoNetflixStr = fread(&netflixStr, sizeof(*netflixStr), TOTAL_CHARS, netflix);
 
-	j = 0; //j vai percorrer a string netflixStr2
-	for (i=0; i < tamanhoNetflixStr; i++){ //for pra copiar a netflixStr em netflixStr2, adicionando NA onde tiver ;;
-		c = netflixStr[i];
-		netflixStr2[j] = c;
-		if (c == ';' && netflixStr[i+1] == ';') {
-			j += 3;
-			netflixStr2[j+1] = 'N';
-			netflixStr2[j+2] = 'A';
-			netflixStr2[j+3] = ';';
+	//feat. Thalles              vet == netflixStr
+	for (i=0; i<TOTAL_CHARS; i++){
+		if(netflixStr[i] == ';' && netflixStr[i+1] == ';'){
+			/* empurra string para o final do vetor de caracteres */
+			for(j=TOTAL_CHARS-1; j>i+1; j--){
+				netflixStr[j] = netflixStr[j-2];
+			}
+			cont=cont+2;
+			netflixStr[i+1] = 'N';/* insere o caractere N no vetor de caracteres */
+			netflixStr[i+2] = 'A';/* insere o caractere A no vetor de caracteres */
 		}
-		j++;
 	}
-	netflixStr2[j] = '\0';
-
-	printf("%s\n --------------------------- \n", netflixStr2);
+	tamanhoNetflixStr += cont; //atualiza a variável do tamanho da netflixStr
 
 	for(i=0; i < tamanhoNetflixStr; i++){ //FOR PARA PRÉ-PROCESSAMENTO DO ARQUIVO
 		c = netflixStr[i];
 		if (c == ';') { //quando encontrar um separador
-			if (netflixStr[i+1] == ';'){ //verifica se há ;;
-				netflixStr[i+1] = 'N';
-				netflixStr[i+2] = 'A';
-				netflixStr[i+3] = ';';
-			}
 			//escreve a linha SE for um atributo válido
 			if (idFilme != 0 && atributo != 0) fprintf(processado, "\n%i;%i;%i;", idFilme-1, atributo, linhai-8);
 			if (atributo == 0){
@@ -99,6 +99,7 @@ int main(){
 
 	processado = fopen("netflix_preproc.txt", "r");
 
+
 	i=0;
 	while (fgets(linha, 255, processado) != NULL){
 		token = strtok(linha, ";");
@@ -119,8 +120,6 @@ int main(){
 		i++;
 	}
 	fclose(processado);
-
-	printf("\n---------------------\n");
 
 	for (i = 0; i < (MAX_LINHAS*7); i++){ //loop para armazenar do registro de atributo no registro de filme
 		if (a[i].aTipo == 1) //char title (1)
@@ -144,7 +143,7 @@ int main(){
 		if (a[i].aTipo == 7) //int urSize (7)
 		filmes[a[i].aFilme].urSize = atoi(a[i].aDesc);
 		else
-			printf("Bugou os indices de tipo\n");
+		printf("Erro nos indices de tipo: %i\n", a[i].aTipo);
 	}
 
 	//-------printf para testar o que foi armazenado no struct filme

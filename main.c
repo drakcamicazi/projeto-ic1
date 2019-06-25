@@ -47,7 +47,7 @@ int main(){
 	int i = 0, j, primeiro = 1, atributo = 1, idFilme = 0, linhai = 2, tamanhoNetflixStr;
 	int l=0, lFilme=0, lTipo=0, pontovirgula = -1, itoken, cont = 0;
 	char lDesc[100]="";
-	int mRatings[80][14] = {{ 0 }}, maiorAno, menorAno, qtdAnos;
+	int mRatings[80][14] = {{ 0 }}, maiorAno, menorAno, qtdAnos, filmesPorAno[80] = {0};
 
 	//------------TAREFA 0: PRÉ-PROCESSAMENTO DO ARQUIVO NETFLIX_ALL.CSV---------------
 	processado = fopen("netflix_preproc.txt", "w");
@@ -173,8 +173,7 @@ int main(){
 	qtdAnos = maiorAno - menorAno;
 
 	//passo 2, popula a primeira coluna da matriz com os anos
-	mRatings[0][0] = maiorAno;
-	for(i=1; i <= qtdAnos; i++){
+	for(i=0; i <= qtdAnos; i++){
 		mRatings[i][0] = maiorAno - i;
 	}
 
@@ -207,8 +206,8 @@ int main(){
 		else
 		printf("Rating %i: %s fora do padrão.\n", i, filmes[i].rating);
 	}
-	
-	 //passo 4, escreve no arquivo a matriz de ratings por ano
+
+	//passo 4, escreve no arquivo a matriz de ratings por ano
 	ex2 = fopen("totalizacao_ratings.csv", "w");
 	fprintf(ex2, "Ano; G; PG; PG-13; R; NR; UR; TV-G; TV-PG; TV-14; TV-MA; TV-Y; TV-Y7; TV-Y7-FV;\n");
 	for(i=0; i<=qtdAnos; i++){
@@ -218,6 +217,19 @@ int main(){
 		fprintf(ex2, "\n");
 	}
 	fclose(ex2);
+
+	//-------------------TAREFA 3: MOSTRAR QUANTOS VÍDEOS FORAM LANÇADOS PELA NETFLIX A CADA ANO-----------------------------
+
+	printf("ano |qtd de filmes lançados\n");
+	for (i = 0; i <= qtdAnos; i++){
+		cont = 0;
+		for (j = 1; j <= 13 ; j++){
+			cont = cont+ mRatings[i][j];
+		}
+		if (cont != 0) printf("%4i| %3i \n", maiorAno-i, cont);
+	}
+
+
 
 	return 0;
 }

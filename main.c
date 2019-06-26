@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#define MAX_LINHAS 1000 //1000
+#define QTD_FILMES 1000
 #define TOTAL_CHARS 100000
 
 struct filme{
 	char title[100];
 	char rating[9];
-	char ratingLevel[100];
-	int ratingDescription;
+	char ratingDescription[100];
+	int ratingLevel;
 	int releaseYear;
 	int urScore;
 	int urSize;
@@ -21,8 +21,6 @@ struct structAtributo{
 
 typedef struct filme Filme;
 typedef struct structAtributo Atributo;
-
-//TODO PELO MENOS MAIS UMA FUNÇÃO
 
 //útil para apagar o \n do arquivo pré-processado
 void apagarUltimoChar(char *c){
@@ -39,17 +37,11 @@ void verificarAbertura(FILE *f1, FILE *f2){
 	}
 }
 
-int main(){
-	FILE *netflix, *processado, *ex2, *ex3, *ex4;
-	Filme filmes[MAX_LINHAS], auxFilmes[MAX_LINHAS];
-	Atributo a[7 * MAX_LINHAS];
-	char linha[255], *token, netflixStr[TOTAL_CHARS], c;
-	int i = 0, ii, j, k, primeiro = 1, atributo = 1, idFilme = 0, linhai = 2, tamanhoNetflixStr;
-	int l=0, lFilme=0, lTipo=0, pontovirgula = -1, itoken, cont = 0, flag, maior;
-	char lDesc[100]="";
-	int mRatings[80][14] = {{ 0 }}, maiorAno, menorAno, qtdAnos, filmesPorAno[80] = {0}, anos[80] = {0}, maisApreciados[80][11];
-
-	//------------TAREFA 0: PRÉ-PROCESSAMENTO DO ARQUIVO NETFLIX_ALL.CSV---------------
+//função que gera o arquivo pré-processado a partir de netflix_all.csv
+void preprocessar(){
+	FILE *netflix, *processado;
+	char c, netflixStr[TOTAL_CHARS];
+	int i=0, j=0, cont=0, tamanhoNetflixStr, linhai = 2, atributo = 1, idFilme = 0;
 	processado = fopen("netflix_preproc.txt", "w");
 	netflix = fopen("netflix_all.csv", "r");
 
@@ -79,7 +71,7 @@ int main(){
 			if (atributo == 0){
 				atributo = 1;
 				idFilme = idFilme + 1;
-				if (idFilme > MAX_LINHAS) {
+				if (idFilme > QTD_FILMES) {
 					break; //break o for quando atinge o máximo de filmes
 				}
 			}
@@ -101,6 +93,19 @@ int main(){
 
 	fclose(netflix);
 	fclose(processado);
+}
+
+int main(){
+	FILE *processado, *ex;
+	Filme filmes[QTD_FILMES], auxFilmes[QTD_FILMES];
+	Atributo a[7 * QTD_FILMES];
+	char linha[255], *token, c, lDesc[100]="", keyword[50]="";
+	int i = 0, ii, j=0, k;
+	int l=0, lFilme=0, lTipo=0, pontovirgula = -1, itoken, cont = 0, flag, maior;
+	int mRatings[80][14] = {{ 0 }}, maiorAno, menorAno, qtdAnos, filmesPorAno[80] = {0}, anos[80] = {0}, maisApreciados[80][11];
+	int qtdViolent = 0, qtdSexual = 0;
+
+	preprocessar();
 
 	//--------------TAREFA 1: ARMAZENAR EM REGISTROS DO TIPO FILME---------------
 
@@ -127,18 +132,18 @@ int main(){
 	}
 	fclose(processado);
 
-	for (i = 0; i < (MAX_LINHAS*7); i++){ //loop para armazenar do registro de atributo no registro de filme
+	for (i = 0; i < (QTD_FILMES*7); i++){ //loop para armazenar do registro de atributo no registro de filme
 		if (a[i].aTipo == 1) //char title (1)
 		strcpy(filmes[a[i].aFilme].title, a[i].aDesc);
 		else
 		if (a[i].aTipo == 2) //char rating (2)
 		strcpy(filmes[a[i].aFilme].rating, a[i].aDesc);
 		else
-		if (a[i].aTipo == 3) //char ratingLevel (3)
-		strcpy(filmes[a[i].aFilme].ratingLevel, a[i].aDesc);
+		if (a[i].aTipo == 3) //char ratingDescription (3)
+		strcpy(filmes[a[i].aFilme].ratingDescription, a[i].aDesc);
 		else
-		if (a[i].aTipo == 4) // int ratingDescription (4)
-		filmes[a[i].aFilme].ratingDescription = atoi(a[i].aDesc);
+		if (a[i].aTipo == 4) // int ratingLevel (4)
+		filmes[a[i].aFilme].ratingLevel = atoi(a[i].aDesc);
 		else
 		if (a[i].aTipo == 5) //int releaseYear (5)
 		filmes[a[i].aFilme].releaseYear = atoi(a[i].aDesc);
@@ -153,11 +158,11 @@ int main(){
 	}
 
 	//-------printf para testar o que foi armazenado no struct filme
-	// printf("title;rating;ratingLevel;ratingDescription;release year;user rating score;user rating size;\n");
-	// for (i=0; i<MAX_LINHAS; i++){
-	// 	printf("%s;%s;%s;%i;%i;%i;%i\n", filmes[i].title, filmes[i].rating, filmes[i].ratingLevel, filmes[i].ratingDescription, filmes[i].releaseYear, filmes[i].urScore, filmes[i].urSize);
+	// printf("title;rating;ratingDescription;ratingLevel;release year;user rating score;user rating size;\n");
+	// for (i=0; i<QTD_FILMES; i++){
+	// 	printf("%s;%s;%s;%i;%i;%i;%i\n", filmes[i].title, filmes[i].rating, filmes[i].ratingDescription, filmes[i].ratingLevel, filmes[i].releaseYear, filmes[i].urScore, filmes[i].urSize);
 	// }
-	// printf("%i\n", filmes[MAX_LINHAS-1].urSize);
+	// printf("%i\n", filmes[QTD_FILMES-1].urSize);
 	//TODO: RESOLVER O BUG DO urSize
 
 
@@ -166,7 +171,7 @@ int main(){
 	//passo 1, encontrar maior e menor ano de lançamento
 	maiorAno = filmes[0].releaseYear;
 	menorAno = filmes[0].releaseYear;
-	for (i = 0; i < MAX_LINHAS; i++){
+	for (i = 0; i < QTD_FILMES; i++){
 		if (filmes[i].releaseYear > maiorAno) maiorAno = filmes[i].releaseYear;
 		if (filmes[i].releaseYear < menorAno) menorAno = filmes[i].releaseYear;
 	}
@@ -177,7 +182,7 @@ int main(){
 		mRatings[i][0] = maiorAno - i;
 	}
 
-	for (i = 0; i < MAX_LINHAS; i++){ // passo 3, FOR PARA ATRIBUIR AS QUANTIDADES DE RATINGS NA MATRIZ
+	for (i = 0; i < QTD_FILMES; i++){ // passo 3, FOR PARA ATRIBUIR AS QUANTIDADES DE RATINGS NA MATRIZ
 		if (strcmp(filmes[i].rating, "G") == 0) mRatings[maiorAno - filmes[i].releaseYear][1]++; // ta imprimindo 9 na coluna G sendo q deveria talvez ser 8????
 		else
 		if (strcmp(filmes[i].rating, "PG") == 0) mRatings[maiorAno - filmes[i].releaseYear][2]++;
@@ -208,20 +213,20 @@ int main(){
 	}
 
 	//passo 4, escreve no arquivo a matriz de ratings por ano
-	ex2 = fopen("totalizacao_ratings.csv", "w");
-	fprintf(ex2, "Ano; G; PG; PG-13; R; NR; UR; TV-G; TV-PG; TV-14; TV-MA; TV-Y; TV-Y7; TV-Y7-FV;\n");
+	ex = fopen("totalizacao_ratings.csv", "w");
+	fprintf(ex, "Ano; G; PG; PG-13; R; NR; UR; TV-G; TV-PG; TV-14; TV-MA; TV-Y; TV-Y7; TV-Y7-FV;\n");
 	for(i=0; i<=qtdAnos; i++){
 		for(j=0; j<14; j++){
-			fprintf(ex2, "%4i; ", mRatings[i][j]);
+			fprintf(ex, "%4i; ", mRatings[i][j]);
 		}
-		fprintf(ex2, "\n");
+		fprintf(ex, "\n");
 	}
-	fclose(ex2);
+	fclose(ex);
 
 	//-------------------TAREFA 3: MOSTRAR QUANTOS VÍDEOS FORAM LANÇADOS PELA NETFLIX A CADA ANO-----------------------------
 
-	ex3 = fopen("filmes_lancados.txt", "w");
-	fprintf(ex3, "ano :qtd de filmes lançados\n");
+	ex = fopen("filmes_lancados.txt", "w");
+	fprintf(ex, "ano :qtd de filmes lançados\n");
 	k=0;
 	for (i = 0; i <= qtdAnos; i++){
 		cont = 0;
@@ -229,23 +234,23 @@ int main(){
 			cont = cont+ mRatings[i][j];
 		}
 		if (cont != 0) {
-			fprintf(ex3, "%4i: %3i \n", maiorAno-i, cont);
+			fprintf(ex, "%4i: %3i \n", maiorAno-i, cont);
 			anos[k] = maiorAno - i;
 			k++;
 		}
 	}
-	fclose(ex3);
+	fclose(ex);
 
-	//-------------------TAREFA 4: Baseado no campo user rating score, gerar um arquivo contendo, para cada ano, os 10 vı́deos mais apreciados pelos usuários-----------------------------
+	//-------------------TAREFA 4: BASEADO NO CAMPO USER RATING SCORE, GERAR UM ARQUIVO CONTENDO, PARA CADA ANO, OS 10 VÍDEOS MAIS APRECIADOS PELOS USUÁRIOS-----------------------------
 	//TÁ ERRADO MAS VIDA Q SEGUE
-	
+
 	//popular o auxFilmes
-	for (i=0; i<MAX_LINHAS; i++){
+	for (i=0; i<QTD_FILMES; i++){
 		strcpy(auxFilmes[i].title, filmes[i].title);
 		strcpy(auxFilmes[i].rating, filmes[i].rating);
-		strcpy(auxFilmes[i].ratingLevel, filmes[i].ratingLevel);
+		strcpy(auxFilmes[i].ratingDescription, filmes[i].ratingDescription);
 		auxFilmes[i].releaseYear = filmes[i].releaseYear;
-		auxFilmes[i].ratingDescription = filmes[i].ratingDescription;
+		auxFilmes[i].ratingLevel = filmes[i].ratingLevel;
 		auxFilmes[i].urScore = filmes[i].urScore;
 		auxFilmes[i].urSize = filmes[i].urSize;
 	}
@@ -263,7 +268,7 @@ int main(){
 		for (j=1; j<=10; j++){ //percorre as colunas da matriz
 			maior = -1;
 			flag = 1;
-			for (k=0; k < MAX_LINHAS; k++){ //for para encontrar o filme com maior rating
+			for (k=0; k < QTD_FILMES; k++){ //for para encontrar o filme com maior rating
 				if (auxFilmes[k].releaseYear == anos[i] && flag){ //inicializa o maior rating com o primeiro filme que achar naquele ano
 					maior = k;
 					flag = 0;
@@ -277,7 +282,7 @@ int main(){
 			maisApreciados[i][j] = maior;
 
 			//for para apagar o score do maior filme e todas as suas ocorrências
-			for (ii=0; ii < MAX_LINHAS; ii++){
+			for (ii=0; ii < QTD_FILMES; ii++){
 				if (auxFilmes[maior].title == auxFilmes[ii].title) {
 					auxFilmes[ii].urScore = 0;
 					strcpy(auxFilmes[ii].title, "");
@@ -285,24 +290,58 @@ int main(){
 			}
 		}
 
-		for(j=0; j<11; j++){
-			printf("%4i; ", maisApreciados[i][j]);
-		}
-		printf("\n");
+		// for(j=0; j<11; j++){ //FOR PARA EXIBIR A MATRIZ
+		// 	printf("%4i; ", maisApreciados[i][j]);
+		// }
+		// printf("\n");
 		i++;
 	}
 
-	ex4 = fopen("10_mais_por_ano.txt", "w");
+	ex = fopen("10_mais_por_ano.txt", "w");
 	i=0;
 	while (anos[i] != 0) { //escrevendo no arquivo
-		fprintf(ex4, "------------ANO %i -----------\n", maisApreciados[i][0]);
+		fprintf(ex, "------------ANO %i -----------\n", maisApreciados[i][0]);
 		for (j=1; j<11; j++){
 			if ((j == 1) || (strcmp(filmes[maisApreciados[i][j]].title, filmes[maisApreciados[i][j-1]].title) != 0))
-				fprintf(ex4, "%iº: %s, score %i\n", j, filmes[maisApreciados[i][j]].title, filmes[maisApreciados[i][j]].urScore);
+			fprintf(ex, "%iº: %s, score %i\n", j, filmes[maisApreciados[i][j]].title, filmes[maisApreciados[i][j]].urScore);
 		}
-		fprintf(ex4, "\n");
+		fprintf(ex, "\n");
 		i++;
 	}
-	fclose(ex4);
+	fclose(ex);
+
+	//-------------------TAREFA 5: MOSTRAR QUANTOS VÍDEOS RECONHECIDOS COMO VIOLENTE E SEXUAL CONTENT EXISTEM SEGUNDO O CAMPO RATINGDESCRIPTION-----------------------------
+	for (i=0; i<QTD_FILMES; i++){
+		if (strstr(filmes[i].ratingDescription, "violen") != NULL){
+			qtdViolent++;
+		}
+		if (strstr(filmes[i].ratingDescription, "sex") != NULL){
+			qtdSexual++;
+		}
+	}
+
+	ex = fopen("busca_violento_sexual.txt", "w");
+
+	fprintf(ex, "Foram achados %i filmes violentos e %i com teor sexual.\n", qtdViolent, qtdSexual);
+	fprintf(ex, "%.2f por cento dos filmes são violentos.\n", ((float) qtdViolent / (float)QTD_FILMES) * 100.0);
+	fprintf(ex, "%.2f por cento dos filmes tem teor sexual.\n", ((float) qtdSexual / (float)QTD_FILMES) * 100.0);
+
+	fclose(ex);
+
+	//-------------------TAREFA 6:MOSTRAR OS TÍTULOS DE VÍDEOS QUE CONTENHAM UMA PALAVRA CHAVE ENTRADA PELA USUÁRIO.-----------------------------
+	printf("Digite uma palavra-chave para buscar nos títulos: ");
+	scanf("%s", &keyword);
+	printf("A palavra inserida foi %s\n\n", keyword);
+
+	flag = 1;
+	for (i=0; i<QTD_FILMES; i++){
+		if (strstr(filmes[i].title, keyword) != NULL){
+			printf("Título encontrado: %s\n", filmes[i].title);
+			printf("Faixa indicada: %i\n", filmes[i].ratingLevel);
+			printf("Descrição da faixa: %s\n\n", filmes[i].ratingDescription);
+			flag = 0;
+		}
+	}
+	if (flag) printf("Nenhum resultado encontrado. Tente novamente com a primeira letra maiúscula.\n");
 	return 0;
 }

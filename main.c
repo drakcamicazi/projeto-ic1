@@ -1,3 +1,7 @@
+//Alunos:
+//Milan Rufini de Andrade,   nº USP 11273868
+//Thalles Raphael Guimarães, nº USP 11320297
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

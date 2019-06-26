@@ -40,14 +40,14 @@ void verificarAbertura(FILE *f1, FILE *f2){
 }
 
 int main(){
-	FILE *netflix, *processado, *ex2;
-	Filme filmes[MAX_LINHAS];
+	FILE *netflix, *processado, *ex2, *ex3, *ex4;
+	Filme filmes[MAX_LINHAS], auxFilmes[MAX_LINHAS];
 	Atributo a[7 * MAX_LINHAS];
 	char linha[255], *token, netflixStr[TOTAL_CHARS], c;
-	int i = 0, j, primeiro = 1, atributo = 1, idFilme = 0, linhai = 2, tamanhoNetflixStr;
-	int l=0, lFilme=0, lTipo=0, pontovirgula = -1, itoken, cont = 0;
+	int i = 0, ii, j, k, primeiro = 1, atributo = 1, idFilme = 0, linhai = 2, tamanhoNetflixStr;
+	int l=0, lFilme=0, lTipo=0, pontovirgula = -1, itoken, cont = 0, flag, maior;
 	char lDesc[100]="";
-	int mRatings[80][14] = {{ 0 }}, maiorAno, menorAno, qtdAnos, filmesPorAno[80] = {0};
+	int mRatings[80][14] = {{ 0 }}, maiorAno, menorAno, qtdAnos, filmesPorAno[80] = {0}, anos[80] = {0}, maisApreciados[80][11];
 
 	//------------TAREFA 0: PRÉ-PROCESSAMENTO DO ARQUIVO NETFLIX_ALL.CSV---------------
 	processado = fopen("netflix_preproc.txt", "w");
@@ -220,16 +220,89 @@ int main(){
 
 	//-------------------TAREFA 3: MOSTRAR QUANTOS VÍDEOS FORAM LANÇADOS PELA NETFLIX A CADA ANO-----------------------------
 
-	printf("ano |qtd de filmes lançados\n");
+	ex3 = fopen("filmes_lancados.txt", "w");
+	fprintf(ex3, "ano :qtd de filmes lançados\n");
+	k=0;
 	for (i = 0; i <= qtdAnos; i++){
 		cont = 0;
 		for (j = 1; j <= 13 ; j++){
 			cont = cont+ mRatings[i][j];
 		}
-		if (cont != 0) printf("%4i| %3i \n", maiorAno-i, cont);
+		if (cont != 0) {
+			fprintf(ex3, "%4i: %3i \n", maiorAno-i, cont);
+			anos[k] = maiorAno - i;
+			k++;
+		}
+	}
+	fclose(ex3);
+
+	//-------------------TAREFA 4: Baseado no campo user rating score, gerar um arquivo contendo, para cada ano, os 10 vı́deos mais apreciados pelos usuários-----------------------------
+	//TÁ ERRADO MAS VIDA Q SEGUE
+	
+	//popular o auxFilmes
+	for (i=0; i<MAX_LINHAS; i++){
+		strcpy(auxFilmes[i].title, filmes[i].title);
+		strcpy(auxFilmes[i].rating, filmes[i].rating);
+		strcpy(auxFilmes[i].ratingLevel, filmes[i].ratingLevel);
+		auxFilmes[i].releaseYear = filmes[i].releaseYear;
+		auxFilmes[i].ratingDescription = filmes[i].ratingDescription;
+		auxFilmes[i].urScore = filmes[i].urScore;
+		auxFilmes[i].urSize = filmes[i].urSize;
 	}
 
+	i=0;
+	while(anos[i] != 0){
+		//printf("%i \n", anos[i]);
+		maisApreciados[i][0] = anos[i];
+		i++;
+	}
 
+	i=0;
+	while(anos[i]!=0){ //while para preencher a matriz de mais apreciados
 
+		for (j=1; j<=10; j++){ //percorre as colunas da matriz
+			maior = -1;
+			flag = 1;
+			for (k=0; k < MAX_LINHAS; k++){ //for para encontrar o filme com maior rating
+				if (auxFilmes[k].releaseYear == anos[i] && flag){ //inicializa o maior rating com o primeiro filme que achar naquele ano
+					maior = k;
+					flag = 0;
+				}
+				//se o score do filme[k] for maior q o maior, o título deles for diferente e o ano for referente a essa passagem do loop
+				if ((auxFilmes[k].urScore > auxFilmes[maior].urScore) && (strcmp(auxFilmes[k].title, auxFilmes[maior].title) != 0) && (auxFilmes[k].releaseYear == anos[i])){
+					maior = k;
+				}
+			}
+			//armazena na matriz de mais apreciados o maior valor obtido
+			maisApreciados[i][j] = maior;
+
+			//for para apagar o score do maior filme e todas as suas ocorrências
+			for (ii=0; ii < MAX_LINHAS; ii++){
+				if (auxFilmes[maior].title == auxFilmes[ii].title) {
+					auxFilmes[ii].urScore = 0;
+					strcpy(auxFilmes[ii].title, "");
+				}
+			}
+		}
+
+		for(j=0; j<11; j++){
+			printf("%4i; ", maisApreciados[i][j]);
+		}
+		printf("\n");
+		i++;
+	}
+
+	ex4 = fopen("10_mais_por_ano.txt", "w");
+	i=0;
+	while (anos[i] != 0) { //escrevendo no arquivo
+		fprintf(ex4, "------------ANO %i -----------\n", maisApreciados[i][0]);
+		for (j=1; j<11; j++){
+			if ((j == 1) || (strcmp(filmes[maisApreciados[i][j]].title, filmes[maisApreciados[i][j-1]].title) != 0))
+				fprintf(ex4, "%iº: %s, score %i\n", j, filmes[maisApreciados[i][j]].title, filmes[maisApreciados[i][j]].urScore);
+		}
+		fprintf(ex4, "\n");
+		i++;
+	}
+	fclose(ex4);
 	return 0;
 }

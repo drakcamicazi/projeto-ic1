@@ -34,9 +34,9 @@ void apagarUltimoChar(char *c){
 }
 
 //função para verificar se abriu os arquivos
-void verificarAbertura(FILE *f1, FILE *f2){
-	if(f1 == NULL || f2 == NULL){
-		printf("Erro na abertura de algum arquivo.");
+void verificarAbertura(FILE *f){
+	if(f == NULL){
+		printf("Erro na abertura do arquivo.");
 		exit(0);
 	}
 }
@@ -49,7 +49,8 @@ void preprocessar(){
 	processado = fopen("netflix_preproc.txt", "w");
 	netflix = fopen("netflix_all.csv", "r");
 
-	verificarAbertura(netflix, processado);
+	verificarAbertura(netflix);
+	verificarAbertura(processado);
 
 	//lê o arquivo inteiro e armazena na string netflixStr
 	tamanhoNetflixStr = fread(&netflixStr, sizeof(*netflixStr), TOTAL_CHARS, netflix);
@@ -114,7 +115,7 @@ int main(){
 	//--------------TAREFA 1: ARMAZENAR EM REGISTROS DO TIPO FILME---------------
 
 	processado = fopen("netflix_preproc.txt", "r");
-	verificarAbertura(processado, processado);
+	verificarAbertura(processado);
 	i=0;
 	while (fgets(linha, 255, processado) != NULL){
 		token = strtok(linha, ";");
@@ -217,7 +218,8 @@ int main(){
 	}
 
 	//passo 4, escreve no arquivo a matriz de ratings por ano
-	ex = fopen("totalizacao_ratings.csv", "w");
+	ex = fopen("ex2_totalizacao_ratings.csv", "w");
+	verificarAbertura(ex);
 	fprintf(ex, "Ano; G; PG; PG-13; R; NR; UR; TV-G; TV-PG; TV-14; TV-MA; TV-Y; TV-Y7; TV-Y7-FV;\n");
 	for(i=0; i<=qtdAnos; i++){
 		for(j=0; j<14; j++){
@@ -229,7 +231,8 @@ int main(){
 
 	//-------------------TAREFA 3: MOSTRAR QUANTOS VÍDEOS FORAM LANÇADOS PELA NETFLIX A CADA ANO-----------------------------
 
-	ex = fopen("filmes_lancados.txt", "w");
+	ex = fopen("ex3_filmes_lancados.txt", "w");
+	verificarAbertura(ex);
 	fprintf(ex, "ano :qtd de filmes lançados\n");
 	k=0;
 	for (i = 0; i <= qtdAnos; i++){
@@ -301,7 +304,8 @@ int main(){
 		i++;
 	}
 
-	ex = fopen("10_mais_por_ano.txt", "w");
+	ex = fopen("ex4_10_mais_por_ano.txt", "w");
+	verificarAbertura(ex);
 	i=0;
 	while (anos[i] != 0) { //escrevendo no arquivo
 		fprintf(ex, "------------ANO %i -----------\n", maisApreciados[i][0]);
@@ -324,7 +328,8 @@ int main(){
 		}
 	}
 
-	ex = fopen("busca_violento_sexual.txt", "w");
+	ex = fopen("ex5_busca_violento_sexual.txt", "w");
+	verificarAbertura(ex);
 
 	fprintf(ex, "Foram achados %i filmes violentos e %i com teor sexual.\n", qtdViolent, qtdSexual);
 	fprintf(ex, "%.2f por cento dos filmes são violentos.\n", ((float) qtdViolent / (float)QTD_FILMES) * 100.0);
@@ -347,5 +352,6 @@ int main(){
 		}
 	}
 	if (flag) printf("Nenhum resultado encontrado. Tente novamente com a primeira letra maiúscula.\n");
+
 	return 0;
 }

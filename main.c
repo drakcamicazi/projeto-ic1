@@ -1,6 +1,6 @@
 //Alunos:
-//Milan Rufini de Andrade,   nº USP 11273868
-//Thalles Raphael Guimarães, nº USP 11320297
+//Milan Rufini de Andrade,   n USP 11273868
+//Thalles Raphael Guimaraes, n USP 11320297
 
 #include <stdio.h>
 #include <string.h>
@@ -26,14 +26,14 @@ struct structAtributo{
 typedef struct filme Filme;
 typedef struct structAtributo Atributo;
 
-//útil para apagar o \n do arquivo pré-processado
+//util para apagar o \n do arquivo pre-processado
 void apagarUltimoChar(char *c){
 	int tamanho = strlen(c); //armazena tamanho da string
-	c[tamanho - 1] = '\0'; //Seta o penúltimo caractere como fim
+	c[tamanho - 1] = '\0'; //Seta o penultimo caractere como fim
 	return;
 }
 
-//função para verificar se abriu os arquivos
+//funcao para verificar se abriu os arquivos
 void verificarAbertura(FILE *f){
 	if(f == NULL){
 		printf("Erro na abertura do arquivo.");
@@ -41,7 +41,7 @@ void verificarAbertura(FILE *f){
 	}
 }
 
-//função que gera o arquivo pré-processado a partir de netflix_all.csv
+//funcao que gera o arquivo pre-processado a partir de netflix_all.csv
 void preprocessar(){
 	FILE *netflix, *processado;
 	char c, netflixStr[TOTAL_CHARS];
@@ -52,7 +52,7 @@ void preprocessar(){
 	verificarAbertura(netflix);
 	verificarAbertura(processado);
 
-	//lê o arquivo inteiro e armazena na string netflixStr
+	//le o arquivo inteiro e armazena na string netflixStr
 	tamanhoNetflixStr = fread(&netflixStr, sizeof(*netflixStr), TOTAL_CHARS, netflix);
 
 	for (i=0; i<TOTAL_CHARS; i++){ //FOR PARA TRATAR CAMPOS VAZIOS DENOTADOS POR ;;
@@ -66,24 +66,24 @@ void preprocessar(){
 			netflixStr[i+2] = 'A';/* insere o caractere A no vetor de caracteres */
 		}
 	}
-	tamanhoNetflixStr += cont; //atualiza a variável do tamanho da netflixStr
+	tamanhoNetflixStr += cont; //atualiza a variavel do tamanho da netflixStr
 
-	for(i=0; i < tamanhoNetflixStr; i++){ //FOR PARA PRÉ-PROCESSAMENTO DO ARQUIVO
+	for(i=0; i < tamanhoNetflixStr; i++){ //FOR PARA PRE-PROCESSAMENTO DO ARQUIVO
 		c = netflixStr[i];
 		if (c == ';') { //quando encontrar um separador
-			//escreve a linha SE for um atributo válido
+			//escreve a linha SE for um atributo valido
 			if (idFilme != 0 && atributo != 0) fprintf(processado, "\n%i;%i;%i;", idFilme-1, atributo, linhai-8);
 			if (atributo == 0){
 				atributo = 1;
 				idFilme = idFilme + 1;
 				if (idFilme > QTD_FILMES) {
-					break; //break o for quando atinge o máximo de filmes
+					break; //break o for quando atinge o maximo de filmes
 				}
 			}
 			linhai++;
 		}
 		else
-		if (c == '\n') { //quando pula linha e o idFilme tá dentro do limite
+		if (c == '\n') { //quando pula linha e o idFilme ta dentro do limite
 			if (idFilme != 0)
 			if (linhai != 9) fprintf(processado, "\n%i;%i;%i;", idFilme-1, atributo, linhai-8);
 			else fprintf(processado, "%i;%i;%i;", idFilme-1, atributo, linhai-8);
@@ -171,9 +171,9 @@ int main(){
 	//TODO: RESOLVER O BUG DO urSize
 
 
-	//-------------------TAREFA 2: ELABORE ANO A ANO A TOTALIZAÇÃO DE VÍDEOS P/ CADA UM DOS RATING-----------------------------
+	//-------------------TAREFA 2: ELABORE ANO A ANO A TOTALIZACAO DE VIDEOS P/ CADA UM DOS RATING-----------------------------
 
-	//passo 1, encontrar maior e menor ano de lançamento
+	//passo 1, encontrar maior e menor ano de lancamento
 	maiorAno = filmes[0].releaseYear;
 	menorAno = filmes[0].releaseYear;
 	for (i = 0; i < QTD_FILMES; i++){
@@ -214,7 +214,7 @@ int main(){
 		else
 		if (strcmp(filmes[i].rating, "TV-Y7-FV") == 0) mRatings[maiorAno - filmes[i].releaseYear][13]++;
 		else
-		printf("Rating %i: %s fora do padrão.\n", i, filmes[i].rating);
+		printf("Rating %i: %s fora do padrao.\n", i, filmes[i].rating);
 	}
 
 	//passo 4, escreve no arquivo a matriz de ratings por ano
@@ -229,11 +229,11 @@ int main(){
 	}
 	fclose(ex);
 
-	//-------------------TAREFA 3: MOSTRAR QUANTOS VÍDEOS FORAM LANÇADOS PELA NETFLIX A CADA ANO-----------------------------
+	//-------------------TAREFA 3: MOSTRAR QUANTOS VI?DEOS FORAM LANCADOS PELA NETFLIX A CADA ANO-----------------------------
 
 	ex = fopen("ex3_filmes_lancados.txt", "w");
 	verificarAbertura(ex);
-	fprintf(ex, "ano :qtd de filmes lançados\n");
+	fprintf(ex, "ano :qtd de filmes lancados\n");
 	k=0;
 	for (i = 0; i <= qtdAnos; i++){
 		cont = 0;
@@ -248,8 +248,8 @@ int main(){
 	}
 	fclose(ex);
 
-	//-------------------TAREFA 4: BASEADO NO CAMPO USER RATING SCORE, GERAR UM ARQUIVO CONTENDO, PARA CADA ANO, OS 10 VÍDEOS MAIS APRECIADOS PELOS USUÁRIOS-----------------------------
-	//TÁ ERRADO MAS VIDA Q SEGUE
+	//-------------------TAREFA 4: BASEADO NO CAMPO USER RATING SCORE, GERAR UM ARQUIVO CONTENDO, PARA CADA ANO, OS 10 VI?DEOS MAIS APRECIADOS PELOS USUARIOS-----------------------------
+	//TA ERRADO MAS VIDA Q SEGUE
 
 	//popular o auxFilmes
 	for (i=0; i<QTD_FILMES; i++){
@@ -280,7 +280,7 @@ int main(){
 					maior = k;
 					flag = 0;
 				}
-				//se o score do filme[k] for maior q o maior, o título deles for diferente e o ano for referente a essa passagem do loop
+				//se o score do filme[k] for maior q o maior, o titulo deles for diferente e o ano for referente a essa passagem do loop
 				if ((auxFilmes[k].urScore > auxFilmes[maior].urScore) && (strcmp(auxFilmes[k].title, auxFilmes[maior].title) != 0) && (auxFilmes[k].releaseYear == anos[i])){
 					maior = k;
 				}
@@ -288,7 +288,7 @@ int main(){
 			//armazena na matriz de mais apreciados o maior valor obtido
 			maisApreciados[i][j] = maior;
 
-			//for para apagar o score do maior filme e todas as suas ocorrências
+			//for para apagar o score do maior filme e todas as suas ocorrencias
 			for (ii=0; ii < QTD_FILMES; ii++){
 				if (auxFilmes[maior].title == auxFilmes[ii].title) {
 					auxFilmes[ii].urScore = 0;
@@ -311,14 +311,14 @@ int main(){
 		fprintf(ex, "------------ANO %i -----------\n", maisApreciados[i][0]);
 		for (j=1; j<11; j++){
 			if ((j == 1) || (strcmp(filmes[maisApreciados[i][j]].title, filmes[maisApreciados[i][j-1]].title) != 0))
-			fprintf(ex, "%iº: %s, score %i\n", j, filmes[maisApreciados[i][j]].title, filmes[maisApreciados[i][j]].urScore);
+			fprintf(ex, "%i�: %s, score %i\n", j, filmes[maisApreciados[i][j]].title, filmes[maisApreciados[i][j]].urScore);
 		}
 		fprintf(ex, "\n");
 		i++;
 	}
 	fclose(ex);
 
-	//-------------------TAREFA 5: MOSTRAR QUANTOS VÍDEOS RECONHECIDOS COMO VIOLENTE E SEXUAL CONTENT EXISTEM SEGUNDO O CAMPO RATINGDESCRIPTION-----------------------------
+	//-------------------TAREFA 5: MOSTRAR QUANTOS VI?DEOS RECONHECIDOS COMO VIOLENTE E SEXUAL CONTENT EXISTEM SEGUNDO O CAMPO RATINGDESCRIPTION-----------------------------
 	for (i=0; i<QTD_FILMES; i++){
 		if (strstr(filmes[i].ratingDescription, "violen") != NULL){
 			qtdViolent++;
@@ -332,26 +332,26 @@ int main(){
 	verificarAbertura(ex);
 
 	fprintf(ex, "Foram achados %i filmes violentos e %i com teor sexual.\n", qtdViolent, qtdSexual);
-	fprintf(ex, "%.2f por cento dos filmes são violentos.\n", ((float) qtdViolent / (float)QTD_FILMES) * 100.0);
+	fprintf(ex, "%.2f por cento dos filmes sao violentos.\n", ((float) qtdViolent / (float)QTD_FILMES) * 100.0);
 	fprintf(ex, "%.2f por cento dos filmes tem teor sexual.\n", ((float) qtdSexual / (float)QTD_FILMES) * 100.0);
 
 	fclose(ex);
 
-	//-------------------TAREFA 6:MOSTRAR OS TÍTULOS DE VÍDEOS QUE CONTENHAM UMA PALAVRA CHAVE ENTRADA PELA USUÁRIO.-----------------------------
-	printf("Digite uma palavra-chave para buscar nos títulos: ");
+	//-------------------TAREFA 6:MOSTRAR OS TI?TULOS DE VI?DEOS QUE CONTENHAM UMA PALAVRA CHAVE ENTRADA PELA USUARIO.-----------------------------
+	printf("Digite uma palavra-chave para buscar nos titulos: ");
 	scanf("%s", &keyword);
 	printf("A palavra inserida foi %s\n\n", keyword);
 
 	flag = 1;
 	for (i=0; i<QTD_FILMES; i++){
 		if (strstr(filmes[i].title, keyword) != NULL){
-			printf("Título encontrado: %s\n", filmes[i].title);
+			printf("Titulo encontrado: %s\n", filmes[i].title);
 			printf("Faixa indicada: %i\n", filmes[i].ratingLevel);
-			printf("Descrição da faixa: %s\n\n", filmes[i].ratingDescription);
+			printf("Descricao da faixa: %s\n\n", filmes[i].ratingDescription);
 			flag = 0;
 		}
 	}
-	if (flag) printf("Nenhum resultado encontrado. Tente novamente com a primeira letra maiúscula.\n");
+	if (flag) printf("Nenhum resultado encontrado. Tente novamente com a primeira letra maiuscula.\n");
 
 	return 0;
 }
